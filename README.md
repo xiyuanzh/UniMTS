@@ -106,3 +106,14 @@ bash run_pretrain.sh
 ### Citation
 
 If you find our work helpful, please cite the following paper
+```
+@misc{zhang2024unimtsunifiedpretrainingmotion,
+      title={UniMTS: Unified Pre-training for Motion Time Series}, 
+      author={Xiyuan Zhang and Diyan Teng and Ranak Roy Chowdhury and Shuheng Li and Dezhi Hong and Rajesh K. Gupta and Jingbo Shang},
+      year={2024},
+      eprint={2410.19818},
+      archivePrefix={arXiv},
+      primaryClass={eess.SP},
+      url={https://arxiv.org/abs/2410.19818}, 
+}
+```
