@@ -10,12 +10,27 @@ import wandb
 import datetime
 from torch.utils.data import DataLoader, TensorDataset
 import torch.optim as optim
+from huggingface_hub import hf_hub_download
+import zipfile
 
 from data import load_multiple
 from utils import compute_metrics_np
 from contrastive import ContrastiveModule
 
 def main(args):
+
+    repo_id = "xiyuanz/UniMTS"
+    checkpoint_file = "checkpoint/UniMTS.pth"
+    config_file = "config.json"
+    data_file = "UniMTS_data.zip"
+
+    if not os.path.exists("checkpoint"):
+        hf_hub_download(repo_id=repo_id, filename=checkpoint_file, local_dir="./")
+    hf_hub_download(repo_id=repo_id, filename=config_file, local_dir="./")
+    if not os.path.exists("UniMTS_data"):
+        hf_hub_download(repo_id=repo_id, filename=data_file, local_dir="./")
+        with zipfile.ZipFile("UniMTS_data.zip", 'r') as zip_ref:
+            zip_ref.extractall("./")
 
     # load real data
     dataset_list = ['Opp_g','UCIHAR','MotionSense','w-HAR','Shoaib','har70plus','realworld','TNDA-HAR','PAMAP',\
@@ -37,6 +52,7 @@ def main(args):
     )
 
     save_path = './checkpoint/%s/' % args.run_tag
+    os.makedirs(save_path, exist_ok=True)
 
     for ds, train_dataloader, test_dataloader, test_labels, label_list, all_text, num_class in \
             zip(dataset_list, train_dataloader_list, test_dataloader_list, test_labels_list, label_list_list, all_text_list, num_classes_list):
@@ -152,7 +168,7 @@ if __name__ == "__main__":
     # data
     parser.add_argument('--padding_size', type=int, default='200', help='padding size (default: 200)')
     parser.add_argument('--k', type=int, help='few shot samples per class (default: None)')
-    parser.add_argument('--data_path', type=str, default='./data/', help='/path/to/data/')
+    parser.add_argument('--data_path', type=str, default='./UniMTS_data/', help='/path/to/data/')
 
     # training
     parser.add_argument('--stage', type=str, default='finetune', help='training stage')
@@ -162,7 +178,7 @@ if __name__ == "__main__":
     parser.add_argument('--stft', type=int, default=0, help='using stft or not')
     parser.add_argument('--batch_size', type=int, default=64, help='batch size')
 
-    parser.add_argument('--checkpoint', type=str, default='./checkpoint/', help='/path/to/checkpoint/')
+    parser.add_argument('--checkpoint', type=str, default='./checkpoint/UniMTS.pth', help='/path/to/checkpoint/')
     
     args = parser.parse_args()
 

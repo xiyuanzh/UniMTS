@@ -10,12 +10,27 @@ import wandb
 import datetime
 from torch.utils.data import DataLoader, TensorDataset
 import torch.optim as optim
+from huggingface_hub import hf_hub_download
+import zipfile
 
 from data import load_multiple, load_custom_data
 from utils import compute_metrics_np
 from contrastive import ContrastiveModule
 
 def main(args):
+
+    repo_id = "xiyuanz/UniMTS"
+    checkpoint_file = "checkpoint/UniMTS.pth"
+    config_file = "config.json"
+    data_file = "UniMTS_data.zip"
+
+    if not os.path.exists("checkpoint"):
+        hf_hub_download(repo_id=repo_id, filename=checkpoint_file, local_dir="./")
+    hf_hub_download(repo_id=repo_id, filename=config_file, local_dir="./")
+    if not os.path.exists("UniMTS_data"):
+        hf_hub_download(repo_id=repo_id, filename=data_file, local_dir="./")
+        with zipfile.ZipFile("UniMTS_data.zip", 'r') as zip_ref:
+            zip_ref.extractall("./")
     
     train_inputs, train_masks, train_labels, _, _ = load_custom_data(
         args.X_train_path, args.y_train_path, args.config_path, args.joint_list, args.original_sampling_rate, padding_size=args.padding_size, split='train', k=args.k, few_shot_path=None
@@ -36,6 +51,7 @@ def main(args):
     )
 
     save_path = './checkpoint/%s/' % args.run_tag
+    os.makedirs(save_path, exist_ok=True)
 
     model = ContrastiveModule(args).cuda()
     optimizer = optim.Adam(model.parameters(), lr=1e-4)
@@ -165,7 +181,7 @@ if __name__ == "__main__":
     parser.add_argument('--stft', type=int, default=0, help='using stft or not')
     parser.add_argument('--batch_size', type=int, default=64, help='batch size')
 
-    parser.add_argument('--checkpoint', type=str, default='./checkpoint/', help='/path/to/checkpoint/')
+    parser.add_argument('--checkpoint', type=str, default='./checkpoint/UniMTS.pth', help='/path/to/checkpoint/')
     
     args = parser.parse_args()
 

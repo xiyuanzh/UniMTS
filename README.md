@@ -8,13 +8,21 @@ UniMTS is the first unified pre-training procedure for motion time series that g
 
 🤗 We have released the model weights at Hugging Face: https://huggingface.co/xiyuanz/UniMTS
 
+🤗 Evaluation datasets are available at [Hugging Face](https://huggingface.co/xiyuanz/UniMTS) or [Google Drive](https://drive.google.com/file/d/1ybD5Fx6c4ykJiDGLPQlLn0m77z9EkjLb/view?usp=sharing)
+
+### Installation
+
+```sh
+conda create -n unimts python=3.9
+conda activate unimts
+pip install -r requirements.txt
+```
+
 ### Evaluation
 
 #### Evaluate on 18 Benchmark Datasets
 
 All the evaluation data are publicly available as specified in the paper. We prepare fine-tuning and test real data as npy files of shape (number_of_samples, sequence_length, channel_dimension). We also prepare their label descriptions as a json file. For example, the Opportunity dataset has four activities "stand", "walk", "sit", "lie", and the corresponding json file is as follows. 
-
-Download the processed evaluation data from [Google Drive](https://drive.google.com/file/d/1ybD5Fx6c4ykJiDGLPQlLn0m77z9EkjLb/view?usp=sharing)
 
 ```json
 {
@@ -30,7 +38,7 @@ Download the processed evaluation data from [Google Drive](https://drive.google.
 Run the script `evaluate.py` for evaluation.
 
 ```sh
-python evaluate.py --batch_size 64 
+python evaluate.py
 ```
 
 Or directly run the bash file
